@@ -45,11 +45,51 @@ export interface ApiAction<Payload, Response, Error> extends Action {
 /**
  * A function that represents an API call
  */
-export type ApiCall<Data, Args extends Array<any> = Array<any>> = (...args: Args) => Promise<Data>
+export type ApiCall<Response, Error, Args extends Array<any> = Array<any>> = (
+  ...args: Args
+) => Promise<Response | Error>
 
 /**
  * A representation of a Generator Function
  */
 export type SagaFunction = () => IterableIterator<any>
 
+/**
+ * Handles API errors
+ */
 export type ApiErrorHandler<Error> = (error: AxiosError) => Error
+
+/**
+ * Definition for an API reducer
+ */
+export type ApiReducer<Payload, Response, Error, State = ReducerState<Response, Error>> = (
+  state: State,
+  action: ApiAction<Payload, Response, Error>
+) => State
+
+/**
+ * Definition for a redux API action
+ * This gives the type of the action and the api call to be made for this type.
+ */
+export interface ReduxApiAction<Payload extends Array<any>, Response, Error> {
+  action: string
+  api: ApiCall<Response, Error, Payload>
+}
+
+/**
+ * An object containing a list of redux api actions
+ */
+export interface ReduxApiActionGroup {
+  [name: string]: ReduxApiAction<any, any, any>
+}
+
+type ExtractReducerState<T> = T extends ReduxApiAction<any, infer Response, infer Error>
+  ? ReducerState<Response, Error>
+  : any
+
+/**
+ * Extract the state from a redux api action group
+ */
+export type ReduxApiActionGroupState<T extends ReduxApiActionGroup> = {
+  [K in keyof T]: ExtractReducerState<T[K]>
+}

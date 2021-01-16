@@ -2,6 +2,7 @@ import createMiddleware from '../src/create.middleware'
 import axios from 'axios'
 import createSagaMiddleware from 'redux-saga'
 import configureMockStore from 'redux-mock-store'
+import actions from '../src/utils/actionTypes'
 
 const moxios = require('moxios')
 
@@ -65,7 +66,7 @@ describe('createMiddleware', () => {
 
       expect(store.getActions()[1]).toMatchObject({
         id: undefined,
-        type: 'createAccount_FAILURE',
+        type: actions.FAILURE('createAccount'),
         payload: { error: 'Something went wrong' },
         statusCode: 400
       })
@@ -94,7 +95,7 @@ describe('createMiddleware', () => {
 
       expect(store.getActions()[1]).toMatchObject({
         id: undefined,
-        type: 'createAccount_FAILURE',
+        type: actions.FAILURE('createAccount'),
         payload: response,
         statusCode: 400
       })
@@ -126,7 +127,7 @@ describe('createMiddleware', () => {
 
       expect(store.getActions()[1]).toMatchObject({
         id: undefined,
-        type: 'createAccount_SUCCESS',
+        type: actions.SUCCESS('createAccount'),
         payload: response,
         statusCode: 201
       })

@@ -1,5 +1,5 @@
 import { ApiAction, ReducerState, WebComponentState } from './types'
-import objectHash from 'object-hash'
+import actions from './utils/actionTypes'
 
 /**
  * Update a single api web component state instance
@@ -15,7 +15,7 @@ function updateInstance<Payload, Data, Error, State extends WebComponentState<Da
   action: ApiAction<Payload, Data, Error>,
   actionType: string
 ): State {
-  if (action.type === `${actionType}_INIT` || action.type === `${actionType}_CLEAR`) {
+  if (action.type === actions.INITIALIZE(actionType) || action.type === actions.CLEAR(actionType)) {
     return initialState
   } else if (action.type === actionType) {
     return {
@@ -27,7 +27,7 @@ function updateInstance<Payload, Data, Error, State extends WebComponentState<Da
       errors: action.clearErrors ? null : state.errors,
       statusCode: null
     }
-  } else if (action.type === `${actionType}_SUCCESS`) {
+  } else if (action.type === actions.SUCCESS(actionType)) {
     return {
       ...state,
       submitted: true,
@@ -37,7 +37,7 @@ function updateInstance<Payload, Data, Error, State extends WebComponentState<Da
       failed: false,
       statusCode: action.statusCode
     }
-  } else if (action.type === `${actionType}_FAILURE`) {
+  } else if (action.type === actions.FAILURE(actionType)) {
     return {
       ...state,
       submitted: true,
@@ -70,8 +70,12 @@ function createReducer<Payload, Data, Error, State extends WebComponentState<Dat
     state: ReducerState<Data, Error> = initialReducerState,
     action: ApiAction<Payload, Data, Error>
   ): ReducerState<Data, Error> => {
-    if (action) {
-      const id = action.id || objectHash(action.payload)
+    if (action?.id) {
+      const id = action.id
+
+      if (action.type.endsWith('_INIT') && action.type != actions.INITIALIZE(actionType)) {
+        return state
+      }
 
       return {
         ...state,
@@ -79,6 +83,10 @@ function createReducer<Payload, Data, Error, State extends WebComponentState<Dat
           ...state.instances,
           [id]: updateInstance(initialState, state.instances[id], action, actionType)
         }
+      }
+    } else {
+      if (process.env.NODE_ENV === 'development') {
+        console.warn('Action (' + JSON.stringify(action) + ') does not have an ID')
       }
     }
     return state

@@ -1,5 +1,6 @@
 import createReducer from '../src/create.reducer'
 import initialState from '../src/initialState'
+import actions from '../src/utils/actionTypes'
 
 describe('createReducer', () => {
   it('should initialize with empty instances', () => {
@@ -14,7 +15,7 @@ describe('createReducer', () => {
 
     const action = {
       id: '123',
-      type: 'createAccount_INIT'
+      type: actions.INITIALIZE('createAccount')
     }
 
     const state = reducer(undefined, action)
@@ -48,7 +49,7 @@ describe('createReducer', () => {
     const id = '123'
 
     let state = reducer(undefined, { id, type: 'createAccount' })
-    state = reducer(state, { id, type: 'createAccount_SUCCESS', payload: { username: 'John Doe' } })
+    state = reducer(state, { id, type: actions.SUCCESS('createAccount'), payload: { username: 'John Doe' } })
     expect(state.instances[id].data).toMatchObject({ username: 'John Doe' })
 
     state = reducer(state, { id, type: 'createAccount' })
@@ -58,7 +59,11 @@ describe('createReducer', () => {
     state = reducer(state, { id, type: 'createAccount', clearData: true })
     expect(state.instances[id].data).toBeNull()
 
-    state = reducer(state, { id, type: 'createAccount_FAILURE', payload: { error: 'The username already exists.' } })
+    state = reducer(state, {
+      id,
+      type: actions.FAILURE('createAccount'),
+      payload: { error: 'The username already exists.' }
+    })
     expect(state.instances[id].errors).toMatchObject({ error: 'The username already exists.' })
 
     state = reducer(state, { id, type: 'createAccount' })
@@ -80,11 +85,16 @@ describe('createReducer', () => {
 
     state = reducer(state, {
       id,
-      type: 'createAccount_FAILURE',
+      type: actions.FAILURE('createAccount'),
       payload: { error: 'This username already exists' },
       statusCode: 400
     })
-    state = reducer(state, { id, type: 'createAccount_SUCCESS', payload: { username: 'John Doe' }, statusCode: 201 })
+    state = reducer(state, {
+      id,
+      type: actions.SUCCESS('createAccount'),
+      payload: { username: 'John Doe' },
+      statusCode: 201
+    })
 
     expect(state.instances[id]).toMatchObject({
       ...initialState,
@@ -100,7 +110,7 @@ describe('createReducer', () => {
 
     state = reducer(state, {
       id,
-      type: 'createAccount_SUCCESS',
+      type: actions.SUCCESS('createAccount'),
       payload: { username: 'John Doe' },
       clearErrors: true,
       statusCode: 201
@@ -123,10 +133,15 @@ describe('createReducer', () => {
 
     let state = reducer(undefined, { id, type: 'createAccount' })
 
-    state = reducer(state, { id, type: 'createAccount_SUCCESS', payload: { username: 'John Doe' }, statusCode: 201 })
     state = reducer(state, {
       id,
-      type: 'createAccount_FAILURE',
+      type: actions.SUCCESS('createAccount'),
+      payload: { username: 'John Doe' },
+      statusCode: 201
+    })
+    state = reducer(state, {
+      id,
+      type: actions.FAILURE('createAccount'),
       payload: { error: 'This username already exists' },
       statusCode: 400
     })
@@ -147,7 +162,7 @@ describe('createReducer', () => {
 
     state = reducer(state, {
       id,
-      type: 'createAccount_FAILURE',
+      type: actions.FAILURE('createAccount'),
       payload: { error: 'This username already exists' },
       clearData: true,
       statusCode: 400
@@ -173,10 +188,15 @@ describe('createReducer', () => {
 
     let state = reducer(undefined, { id, type: 'createAccount' })
 
-    state = reducer(state, { id, type: 'createAccount_SUCCESS', payload: { username: 'John Doe' }, statusCode: 201 })
     state = reducer(state, {
       id,
-      type: 'createAccount_CLEAR'
+      type: actions.SUCCESS('createAccount'),
+      payload: { username: 'John Doe' },
+      statusCode: 201
+    })
+    state = reducer(state, {
+      id,
+      type: actions.CLEAR('createAccount')
     })
 
     expect(state.instances[id]).toMatchObject(initialState)
@@ -189,7 +209,12 @@ describe('createReducer', () => {
 
     let state = reducer(undefined, { id, type: 'createAccount' })
 
-    state = reducer(state, { id, type: 'createAccount_SUCCESS', payload: { username: 'John Doe' }, statusCode: 201 })
+    state = reducer(state, {
+      id,
+      type: actions.SUCCESS('createAccount'),
+      payload: { username: 'John Doe' },
+      statusCode: 201
+    })
 
     const prevState = { ...state }
 

@@ -2,6 +2,7 @@ import { ApiAction, ApiCall, SagaFunction } from './types'
 import { call, put, takeLatest } from 'redux-saga/effects'
 import { AxiosResponse } from 'axios'
 import handleApiError from './handle.api.error'
+import actions from './utils/actionTypes'
 
 /**
  * Creates a saga middleware that watches for the api call action and performs the call.
@@ -12,7 +13,7 @@ import handleApiError from './handle.api.error'
  */
 function createMiddleware<Response, Error, Payload extends Array<any>>(
   actionType: string,
-  endpoint: ApiCall<Response>
+  endpoint: ApiCall<Response, Error, Payload>
 ): SagaFunction {
   function* makeApiCall(action: ApiAction<Payload, Response, Error>): IterableIterator<any> {
     const args = (action.payload || []) as Payload
@@ -29,7 +30,7 @@ function createMiddleware<Response, Error, Payload extends Array<any>>(
 
         yield put({
           id,
-          type: `${actionType}_SUCCESS`,
+          type: actions.SUCCESS(actionType),
           payload: data,
           statusCode: response.status
         })
@@ -45,7 +46,7 @@ function createMiddleware<Response, Error, Payload extends Array<any>>(
 
       yield put({
         id,
-        type: `${actionType}_FAILURE`,
+        type: actions.FAILURE(actionType),
         payload: data,
         statusCode: error?.response?.status || 500
       })
