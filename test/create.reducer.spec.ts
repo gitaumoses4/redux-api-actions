@@ -1,0 +1,203 @@
+import createReducer from '../src/create.reducer'
+import initialState from '../src/initialState'
+
+describe('createReducer', () => {
+  it('should initialize with empty instances', () => {
+    const reducer = createReducer(initialState, 'createAccount')
+    const state = reducer(undefined, null)
+
+    expect(state).toMatchObject({ instances: {} })
+  })
+
+  it('should initialize an action with the initialState', () => {
+    const reducer = createReducer(initialState, 'createAccount')
+
+    const action = {
+      id: '123',
+      type: 'createAccount_INIT'
+    }
+
+    const state = reducer(undefined, action)
+
+    expect(state.instances['123']).toMatchObject(initialState)
+  })
+
+  it('should handle the api call ', () => {
+    const reducer = createReducer(initialState, 'createAccount')
+
+    const action = {
+      id: '123',
+      type: 'createAccount'
+    }
+
+    const state = reducer(undefined, action)
+    expect(state.instances['123']).toMatchObject({
+      ...initialState,
+      submitting: true,
+      submitted: false,
+      failed: false,
+      statusCode: null,
+      errors: null,
+      data: null
+    })
+  })
+
+  it('should clear the data and errors during an api call', () => {
+    const reducer = createReducer(initialState, 'createAccount')
+
+    const id = '123'
+
+    let state = reducer(undefined, { id, type: 'createAccount' })
+    state = reducer(state, { id, type: 'createAccount_SUCCESS', payload: { username: 'John Doe' } })
+    expect(state.instances[id].data).toMatchObject({ username: 'John Doe' })
+
+    state = reducer(state, { id, type: 'createAccount' })
+
+    expect(state.instances[id].data).toMatchObject({ username: 'John Doe' })
+
+    state = reducer(state, { id, type: 'createAccount', clearData: true })
+    expect(state.instances[id].data).toBeNull()
+
+    state = reducer(state, { id, type: 'createAccount_FAILURE', payload: { error: 'The username already exists.' } })
+    expect(state.instances[id].errors).toMatchObject({ error: 'The username already exists.' })
+
+    state = reducer(state, { id, type: 'createAccount' })
+    expect(state.instances[id].errors).toMatchObject({ error: 'The username already exists.' })
+
+    state = reducer(state, { id, type: 'createAccount', clearData: true })
+    expect(state.instances[id].errors).toMatchObject({ error: 'The username already exists.' })
+
+    state = reducer(state, { id, type: 'createAccount', clearErrors: true })
+    expect(state.instances[id].errors).toBeNull()
+  })
+
+  it('should update the data on success', () => {
+    const reducer = createReducer(initialState, 'createAccount')
+
+    const id = '123'
+
+    let state = reducer(undefined, { id, type: 'createAccount' })
+
+    state = reducer(state, {
+      id,
+      type: 'createAccount_FAILURE',
+      payload: { error: 'This username already exists' },
+      statusCode: 400
+    })
+    state = reducer(state, { id, type: 'createAccount_SUCCESS', payload: { username: 'John Doe' }, statusCode: 201 })
+
+    expect(state.instances[id]).toMatchObject({
+      ...initialState,
+      submitting: false,
+      submitted: true,
+      failed: false,
+      statusCode: 201,
+      errors: {
+        error: 'This username already exists'
+      },
+      data: { username: 'John Doe' }
+    })
+
+    state = reducer(state, {
+      id,
+      type: 'createAccount_SUCCESS',
+      payload: { username: 'John Doe' },
+      clearErrors: true,
+      statusCode: 201
+    })
+
+    expect(state.instances[id]).toMatchObject({
+      ...initialState,
+      submitting: false,
+      submitted: true,
+      failed: false,
+      statusCode: 201,
+      data: { username: 'John Doe' }
+    })
+  })
+
+  it('should update on failure', () => {
+    const reducer = createReducer(initialState, 'createAccount')
+
+    const id = '123'
+
+    let state = reducer(undefined, { id, type: 'createAccount' })
+
+    state = reducer(state, { id, type: 'createAccount_SUCCESS', payload: { username: 'John Doe' }, statusCode: 201 })
+    state = reducer(state, {
+      id,
+      type: 'createAccount_FAILURE',
+      payload: { error: 'This username already exists' },
+      statusCode: 400
+    })
+
+    expect(state.instances[id]).toMatchObject({
+      ...initialState,
+      submitting: false,
+      submitted: true,
+      failed: true,
+      statusCode: 400,
+      errors: {
+        error: 'This username already exists'
+      },
+      data: {
+        username: 'John Doe'
+      }
+    })
+
+    state = reducer(state, {
+      id,
+      type: 'createAccount_FAILURE',
+      payload: { error: 'This username already exists' },
+      clearData: true,
+      statusCode: 400
+    })
+
+    expect(state.instances[id]).toMatchObject({
+      ...initialState,
+      submitting: false,
+      submitted: true,
+      failed: true,
+      statusCode: 400,
+      errors: {
+        error: 'This username already exists'
+      },
+      data: null
+    })
+  })
+
+  it('should clear the state', () => {
+    const reducer = createReducer(initialState, 'createAccount')
+
+    const id = '123'
+
+    let state = reducer(undefined, { id, type: 'createAccount' })
+
+    state = reducer(state, { id, type: 'createAccount_SUCCESS', payload: { username: 'John Doe' }, statusCode: 201 })
+    state = reducer(state, {
+      id,
+      type: 'createAccount_CLEAR'
+    })
+
+    expect(state.instances[id]).toMatchObject(initialState)
+  })
+
+  it('should return the current state', () => {
+    const reducer = createReducer(initialState, 'createAccount')
+
+    const id = '123'
+
+    let state = reducer(undefined, { id, type: 'createAccount' })
+
+    state = reducer(state, { id, type: 'createAccount_SUCCESS', payload: { username: 'John Doe' }, statusCode: 201 })
+
+    const prevState = { ...state }
+
+    state = reducer(state, {
+      id,
+      type: 'anActionThatDoesNotExist'
+    })
+
+    expect(state).toMatchObject(prevState)
+  })
+})
