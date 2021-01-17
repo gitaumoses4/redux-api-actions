@@ -1,11 +1,11 @@
 import createReducer from '../src/create.reducer'
-import initialState from '../src/initialState'
+import initialState from '../src/utils/initialState'
 import actions from '../src/utils/actionTypes'
 
 describe('createReducer', () => {
   it('should initialize with empty instances', () => {
     const reducer = createReducer(initialState, 'createAccount')
-    const state = reducer(undefined, null)
+    const state = reducer()
 
     expect(state).toMatchObject({ instances: {} })
   })

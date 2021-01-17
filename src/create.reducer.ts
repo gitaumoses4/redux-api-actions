@@ -14,7 +14,7 @@ function updateInstance<Payload, Data, Error, State extends WebComponentState<Da
   state: State = initialState,
   action: ApiAction<Payload, Data, Error>,
   actionType: string
-): State {
+): State | undefined {
   if (action.type === actions.INITIALIZE(actionType) || action.type === actions.CLEAR(actionType)) {
     return initialState
   } else if (action.type === actionType) {
@@ -47,8 +47,6 @@ function updateInstance<Payload, Data, Error, State extends WebComponentState<Da
       data: action.clearData ? null : state.data,
       statusCode: action.statusCode
     }
-  } else {
-    return state
   }
 }
 
@@ -68,25 +66,26 @@ function createReducer<Payload, Data, Error, State extends WebComponentState<Dat
 
   return (
     state: ReducerState<Data, Error> = initialReducerState,
-    action: ApiAction<Payload, Data, Error>
+    action?: ApiAction<Payload, Data, Error>
   ): ReducerState<Data, Error> => {
     if (action?.id) {
-      const id = action.id
+      const { id } = action
+      const { instances } = state
 
-      if (action.type.endsWith('_INIT') && action.type != actions.INITIALIZE(actionType)) {
-        return state
-      }
+      const updatedState = updateInstance(initialState, instances[id], action, actionType)
 
-      return {
-        ...state,
-        instances: {
-          ...state.instances,
-          [id]: updateInstance(initialState, state.instances[id], action, actionType)
-        }
-      }
+      return updatedState
+        ? {
+            ...state,
+            instances: {
+              ...instances,
+              [id]: updatedState
+            }
+          }
+        : state
     } else {
       if (process.env.NODE_ENV === 'development') {
-        console.warn('Action (' + JSON.stringify(action) + ') does not have an ID')
+        console.error('Action (' + JSON.stringify(action) + ') does not have an ID')
       }
     }
     return state

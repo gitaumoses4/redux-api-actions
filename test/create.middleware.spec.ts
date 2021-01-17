@@ -1,7 +1,7 @@
 import createMiddleware from '../src/create.middleware'
 import axios from 'axios'
-import createSagaMiddleware from 'redux-saga'
-import configureMockStore from 'redux-mock-store'
+import createSagaMiddleware, { SagaMiddleware } from 'redux-saga'
+import configureMockStore, { MockStoreEnhanced } from 'redux-mock-store'
 import actions from '../src/utils/actionTypes'
 
 const moxios = require('moxios')
@@ -9,8 +9,8 @@ const moxios = require('moxios')
 describe('createMiddleware', () => {
   const apiCall = (username: string) => axios.post('/register', { username })
   let mockStore
-  let sagaMiddleware
-  let store
+  let sagaMiddleware: SagaMiddleware<object>
+  let store: MockStoreEnhanced<any>
 
   beforeEach(() => {
     moxios.install()

@@ -1,22 +1,14 @@
 import axios from 'axios'
-import createSagaMiddleware from 'redux-saga'
-import configureMockStore from 'redux-mock-store'
 import reducerBuilder from '../src/reducer.builder'
-import { all } from 'redux-saga/effects'
-import { applyMiddleware, compose, createStore } from 'redux'
 import actions from '../src/utils/actionTypes'
+import { MockStoreEnhanced } from 'redux-mock-store'
+import createMockStore from './utils/create.mock.store'
 
 const moxios = require('moxios')
 
 describe('reducerBuilder', () => {
-  const register = (username: string) =>
-    axios
-      .post<{ username: string; message: string }>('/register', { username })
-      .then(response => response.data)
-  const login = (username: string, password: string) =>
-    axios
-      .post<{ token: string }>('/login', { username, password })
-      .then(response => response.data)
+  const register = (username: string) => axios.post<{ username: string }>('/register', { username })
+  const login = (username: string, password: string) => axios.post<{ token: string }>('/login', { username, password })
 
   const builtReducer = reducerBuilder({
     login: {
@@ -29,20 +21,11 @@ describe('reducerBuilder', () => {
     }
   })
 
-  let mockStore
-  let sagaMiddleware
-  let store
+  let store: MockStoreEnhanced<any>
 
   beforeEach(() => {
     moxios.install()
-    sagaMiddleware = createSagaMiddleware()
-    mockStore = configureMockStore([sagaMiddleware])
-
-    store = createStore(builtReducer.reducer, compose(applyMiddleware(sagaMiddleware)))
-
-    sagaMiddleware.run(function* () {
-      yield all(builtReducer.watchers)
-    })
+    store = createMockStore(builtReducer.reducer, builtReducer.watchers)
   })
 
   afterEach(() => {
@@ -72,19 +55,33 @@ describe('reducerBuilder', () => {
       register: { instances: { '456': {} } }
     })
 
-    const token = '88883333_token'
+    store.dispatch({ type: actions.INITIALIZE('createAccount'), id: '123' })
 
-    moxios.stubRequest('/login', {
-      status: 200,
-      response: {
-        token
-      }
+    expect(store.getState()).toMatchObject({
+      login: { instances: { '123': {}, '456': {} } },
+      register: { instances: { '123': {}, '456': {} } }
     })
 
-    store.dispatch({ type: 'login', payload: ['John Doe', 'password'], id: '123' })
+    const token = '88883333_token'
+
+    moxios.stubRequest('/login', { status: 200, response: { token } })
+
+    moxios.stubRequest('/register', { status: 200, response: { username: 'John Doe' } })
+
+    store.dispatch({ type: 'login', payload: ['John Doe', 'password'], id: '456' })
+    store.dispatch({ type: 'createAccount', payload: ['John Doe'], id: '123' })
 
     moxios.wait(() => {
-      console.log(JSON.stringify(store.getState()))
+      expect(store.getState().login.instances['456'].data).toMatchObject({
+        token
+      })
+
+      // Ensure no other state was affected.
+      expect(store.getState().register.instances['456'].data).toBeNull()
+
+      expect(store.getState().register.instances['123'].data).toMatchObject({
+        username: 'John Doe'
+      })
 
       done()
     })

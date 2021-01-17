@@ -2,7 +2,7 @@ import { ReduxApiActionGroup, ReduxApiActionGroupState, SagaFunction } from './t
 import { combineReducers, Reducer, ReducersMapObject } from 'redux'
 import createReducer from './create.reducer'
 import createMiddleware from './create.middleware'
-import initialState from './initialState'
+import initialState from './utils/initialState'
 
 function reducerBuilder<T extends ReduxApiActionGroup>(
   apiActionGroup: T

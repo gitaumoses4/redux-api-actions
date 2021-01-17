@@ -1,5 +1,4 @@
 export default {
-  action: '',
   data: null,
   errors: null,
   failed: false,
