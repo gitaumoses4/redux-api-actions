@@ -128,7 +128,9 @@ export type ApiGroup = Record<string, ApiEndpoint<any, any, any>>
 /**
  * A structure for the definition of api endpoints.
  */
-export type ApiDefinition = Record<string, ApiGroup>
+export interface ApiDefinition {
+  [group: string]: ApiGroup
+}
 
 /**
  * Defines the corresponding Api actions for an api definition

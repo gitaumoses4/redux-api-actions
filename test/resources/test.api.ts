@@ -1,7 +1,6 @@
-import { ApiDefinition } from '../../src/types'
 import axios from 'axios'
 
-const testApi: ApiDefinition = {
+const testApi = {
   authentication: {
     login: (username: string, password: string) => axios.post<{ token: string }>('/login', { username, password }),
     register: (username: string, password: string) =>
