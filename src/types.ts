@@ -1,5 +1,5 @@
-import { Action, Reducer } from 'redux'
-import { AxiosError } from 'axios'
+import { Action, CombinedState, Reducer } from 'redux'
+import { AxiosError, AxiosResponse } from 'axios'
 
 /**
  * Return the argument types for a function
@@ -60,7 +60,7 @@ export type ApiActionCreator<Payload extends Array<any>, Response, Error> = (
  */
 export type ApiCall<Response, Error, Args extends Array<any> = Array<any>> = (
   ...args: Args
-) => Promise<Response | Error>
+) => Promise<AxiosResponse<Response | Error>>
 
 /**
  * A representation of a Generator Function
@@ -162,16 +162,38 @@ export type ApiReducerDefinition<A extends ApiDefinition> = {
   >
 }
 
+type ExtractBuiltReducerState<T> = T extends { reducer: Reducer<infer U> } ? U : never
+
 export type ApiEndpointsDefinition<A extends ApiDefinition> = {
   [Group in keyof A]: {
     [Endpoint in keyof A[Group]]: [Group, Endpoint]
   }
 }
 
+/**
+ * Constructed from building an Api. It provides the reducers for each group, actions for each endpoint and types for each endpoint.
+ */
 export type ApiDefinitionContext<A extends ApiDefinition> = {
   reducers: ApiReducerDefinition<A>
   actions: ApiActionsDefinition<A>
   types: ApiActionTypesDefinition<A>
   name: string
   endpoints: ApiEndpointsDefinition<A>
+}
+
+type ExtractReducers<A extends ApiDefinitionContext<any>> = A extends { reducers: infer U } ? U : never
+
+type ExtractApiReducerDefinitionState<A extends ApiDefinitionContext<any>, R = ExtractReducers<A>> = {
+  [Group in keyof R]: ExtractBuiltReducerState<R[Group]>
+}
+
+/**
+ * An object containing multiple api definition contexts.
+ */
+export interface MultipleApiReducers {
+  [name: string]: ApiDefinitionContext<any>
+}
+
+export type CombinedApiReducers<M extends MultipleApiReducers> = {
+  [api in keyof M]: Reducer<CombinedState<ExtractApiReducerDefinitionState<M[api]>>>
 }
