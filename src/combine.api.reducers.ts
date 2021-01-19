@@ -1,4 +1,12 @@
-import { combineReducers, Middleware, MiddlewareAPI } from 'redux'
+import {
+  ActionFromReducersMapObject,
+  CombinedState,
+  combineReducers,
+  Middleware,
+  MiddlewareAPI,
+  Reducer,
+  StateFromReducersMapObject
+} from 'redux'
 import createSagaMiddleware from 'redux-saga'
 import { all } from 'redux-saga/effects'
 import { ApiDefinition, ApiDefinitionContext, CombinedApiReducers } from './types'
@@ -41,7 +49,10 @@ function prepareApiContext<A extends ApiDefinition>(apiContext: ApiDefinitionCon
 function combineApiReducers<R extends Record<string, ApiDefinitionContext<any>>>(
   apiReducers: R
 ): {
-  reducer: CombinedApiReducers<R>
+  reducer: Reducer<
+    CombinedState<StateFromReducersMapObject<CombinedApiReducers<R>>>,
+    ActionFromReducersMapObject<CombinedApiReducers<R>>
+  >
   middleware: Middleware<any>
 } {
   const combinedReducer: any = {}
@@ -58,7 +69,7 @@ function combineApiReducers<R extends Record<string, ApiDefinitionContext<any>>>
 
   return {
     middleware: registerMiddleware(allSagas),
-    reducer: combinedReducer
+    reducer: combineReducers(combinedReducer as CombinedApiReducers<R>)
   }
 }
 

@@ -63,6 +63,21 @@ export type ApiCall<Response, Error, Args extends Array<any> = Array<any>> = (
 ) => Promise<AxiosResponse<Response | Error>>
 
 /**
+ * Extracts the response from the api call
+ */
+export type ExtractResponse<A> = A extends ApiCall<infer Response, any, any> ? Response : never
+
+/**
+ * Extracts the error from an api call
+ */
+export type ExtractError<A> = A extends ApiCall<any, infer Error, any> ? Error : never
+
+/**
+ * Extracts the payload from an api call
+ */
+export type ExtractPayload<A> = A extends ApiCall<any, any, infer Payload> ? Payload : never
+
+/**
  * A representation of a Generator Function
  */
 export type SagaFunction = () => IterableIterator<any>
@@ -194,6 +209,31 @@ export interface MultipleApiReducers {
   [name: string]: ApiDefinitionContext<any>
 }
 
-export type CombinedApiReducers<M extends MultipleApiReducers> = {
-  [api in keyof M]: Reducer<CombinedState<ExtractApiReducerDefinitionState<M[api]>>>
+/**
+ * Creates a ReducerMapObject from multiple api reducers.
+ */
+export type CombinedApiReducers<M extends MultipleApiReducers, api extends keyof M = keyof M> = {
+  [name: string]: Reducer<CombinedState<ExtractApiReducerDefinitionState<M[api]>>>
 }
+
+/**
+ * Creates a WebComponentState from an ApiCall definition
+ */
+export type WebComponentStateFromEndpoint<T> = T extends ApiCall<infer Response, infer Error>
+  ? WebComponentState<Response, Error>
+  : never
+
+/**
+ * return type for the useApiAction hook.
+ *
+ * It returns an array with two items:
+ * -> The api action creator
+ * -> The redux state for that api action.
+ */
+export type UseApiAction<
+  Response,
+  Error,
+  Payload extends Array<any>,
+  A extends ApiCall<Response, Error, Payload>,
+  S
+> = [(...args: Parameters<A>) => ApiAction<Payload, Response, Error>, S]

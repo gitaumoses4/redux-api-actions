@@ -2,7 +2,7 @@ import combineApiReducers from '../src/combine.api.reducers'
 import buildApiReducer from '../src/build.api.reducer'
 import testApi from './resources/test.api'
 import testApi2 from './resources/test.api.2'
-import { applyMiddleware, combineReducers, createStore, Store } from 'redux'
+import { applyMiddleware, createStore, Store } from 'redux'
 import actionTypes from '../src/utils/actionTypes'
 
 const moxios = require('moxios')
@@ -16,7 +16,7 @@ describe('combineApiReducers', () => {
       Test2: buildApiReducer(testApi2, 'Test2')
     })
 
-    store = createStore(combineReducers(combined.reducer), applyMiddleware(combined.middleware))
+    store = createStore(combined.reducer, applyMiddleware(combined.middleware))
   })
 
   afterEach(() => {
