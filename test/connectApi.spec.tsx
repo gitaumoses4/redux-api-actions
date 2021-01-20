@@ -6,12 +6,17 @@ import { act, fireEvent, render, screen } from '@testing-library/react'
 import { applyMiddleware, combineReducers, createStore, Store } from 'redux'
 import combineApiReducers from '../src/combine.api.reducers'
 import { Provider } from 'react-redux'
+import { ApiConnectedProps } from '../src/types'
 
 const moxios = require('moxios')
 
 const TestApi = buildApiReducer(testApi, 'test')
 
-function TestComponent(props: any) {
+const connector = connectApi(TestApi, api => ({
+  login: api.authentication.login
+}))
+
+function TestComponent(props: ApiConnectedProps<typeof connector> & { id: string }) {
   const [login, state] = props.login()
   return (
     <div>
@@ -22,9 +27,7 @@ function TestComponent(props: any) {
   )
 }
 
-const ConnectedTestComponent = connectApi(TestComponent, TestApi, api => ({
-  login: api.authentication.login
-}))
+const ConnectedTestComponent = connector(TestComponent)
 
 describe('connectApis', () => {
   let store: Store
@@ -40,7 +43,7 @@ describe('connectApis', () => {
 
     render(
       <Provider store={store}>
-        <ConnectedTestComponent />
+        <ConnectedTestComponent id="" />
       </Provider>
     )
 

@@ -1,5 +1,6 @@
 import { Action, CombinedState, Reducer } from 'redux'
 import { AxiosError, AxiosResponse } from 'axios'
+import * as React from 'react'
 
 /**
  * Return the argument types for a function
@@ -247,22 +248,12 @@ type ExtractGroup<T> = T extends [infer Group, any] ? Group : never
 
 type ExtractEndpoint<T> = T extends [any, infer Endpoint] ? Endpoint : never
 
-export type ConnectionArgs<T extends ApiDefinition> = {
-  api: ApiDefinitionContext<T>
-  endpoints: MapActions<T>
-}
-
-type ExtractMapActions<T extends ConnectionArgs<A>, A extends ApiDefinition> = T extends { endpoints: infer U }
-  ? U
-  : never
-
 /**
  * The props generated after connecting a component to an API
  */
-export type ConnectedApiProps<
+export type CreateApiActions<
   A extends ApiDefinition,
-  Args extends ConnectionArgs<A> = ConnectionArgs<A>,
-  Actions extends ExtractMapActions<Args, A> = ExtractMapActions<Args, A>,
+  Actions extends MapActions<A>,
   MappedActions extends ReturnType<Actions> = ReturnType<Actions>,
   K extends keyof MappedActions = keyof MappedActions,
   Group extends ExtractGroup<MappedActions[K]> = ExtractGroup<MappedActions[K]>,
@@ -276,6 +267,8 @@ export type ConnectedApiProps<
 > = Record<
   K,
   (
-    actionParams: { [n in keyof ApiAction<any, any, any>]?: ApiAction<any, any, any>[n] }
+    actionParams?: { [n in keyof ApiAction<any, any, any>]?: ApiAction<any, any, any>[n] }
   ) => UseApiAction<Response, Error, Payload, A[Group][Endpoint], TSelected>
 >
+
+export type ApiConnectedProps<T> = T extends (Comp: React.ComponentType<infer U>) => any ? U : never

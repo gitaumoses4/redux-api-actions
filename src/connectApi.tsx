@@ -1,4 +1,4 @@
-import { ApiDefinition, ApiDefinitionContext, ConnectedApiProps, MapActions } from './types'
+import { ApiDefinition, ApiDefinitionContext, CreateApiActions, MapActions } from './types'
 import * as React from 'react'
 import useApiAction from './hooks/useApiAction'
 
@@ -13,7 +13,7 @@ function createApiAction<A extends ApiDefinition, Group extends keyof A, Endpoin
 function createApiActions<A extends ApiDefinition, Actions extends MapActions<A>>(
   api: ApiDefinitionContext<A>,
   mapActions: Actions
-): ConnectedApiProps<A> {
+): CreateApiActions<A, Actions> {
   const actions = mapActions(api.endpoints)
   return Object.keys(actions).reduce((acc, action: any) => {
     const [group, endpoint] = actions[action]
@@ -25,11 +25,22 @@ function createApiActions<A extends ApiDefinition, Actions extends MapActions<A>
 }
 
 function connectApi<OuterProps, A extends ApiDefinition, Actions extends MapActions<A>>(
-  Comp: React.ComponentType<OuterProps>,
+  Comp: React.ComponentType<OuterProps & CreateApiActions<A, Actions>>,
   api: ApiDefinitionContext<A>,
   mapActions: Actions
 ) {
-  return (props: OuterProps) => <Comp {...props} {...createApiActions(api, mapActions)} />
+  return function (props: OuterProps) {
+    return <Comp {...props} {...createApiActions(api, mapActions)} />
+  }
 }
 
-export default connectApi
+function apiConnector<A extends ApiDefinition, Actions extends MapActions<A>>(
+  api: ApiDefinitionContext<A>,
+  mapActions: Actions
+) {
+  return function <OuterProps>(Comp: React.ComponentType<OuterProps & CreateApiActions<A, Actions>>) {
+    return connectApi<OuterProps, A, Actions>(Comp, api, mapActions)
+  }
+}
+
+export default apiConnector
