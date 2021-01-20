@@ -13,17 +13,17 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useCallback, useEffect, useState } from 'react'
 import objectHash from 'object-hash'
 import actionTypes from '../utils/actionTypes'
-
-const DEFAULT_ACTION_ID = '__default__action__id__'
+import initialState from '../utils/initialState'
+import { DEFAULT_ACTION_ID } from '../utils/actions'
 
 function useApiAction<
   A extends ApiDefinition,
   Group extends keyof A,
   Endpoint extends keyof A[Group],
-  TSelected extends WebComponentStateFromEndpoint<A[Group][Endpoint]>,
-  Response extends ExtractResponse<A[Group][Endpoint]>,
-  Error extends ExtractError<A[Group][Endpoint]>,
-  Payload extends ExtractPayload<A[Group][Endpoint]>
+  TSelected extends WebComponentStateFromEndpoint<A[Group][Endpoint]> = WebComponentStateFromEndpoint<A[Group][Endpoint]>,
+  Response extends ExtractResponse<A[Group][Endpoint]> = ExtractResponse<A[Group][Endpoint]>,
+  Error extends ExtractError<A[Group][Endpoint]> = ExtractError<A[Group][Endpoint]>,
+  Payload extends ExtractPayload<A[Group][Endpoint]> = ExtractPayload<A[Group][Endpoint]>
 >(
   api: ApiDefinitionContext<A>,
   getEndpoint: (api: ApiEndpointsDefinition<A>) => [Group, Endpoint],
@@ -60,7 +60,7 @@ function useApiAction<
     throw new Error('Key "apis" is not defined on the root reducer.')
   })
 
-  return [actionCreator, endpointState]
+  return [actionCreator, endpointState || initialState]
 }
 
 export default useApiAction

@@ -1,19 +1,18 @@
-import useApiAction from '../../src/hooks/useApiAction'
-import buildApiReducer from '../../src/build.api.reducer'
-import testApi from '../resources/test.api'
 import * as React from 'react'
+import connectApi from '../src/connectApi'
+import buildApiReducer from '../src/build.api.reducer'
+import testApi from './resources/test.api'
 import { act, fireEvent, render, screen } from '@testing-library/react'
-import { Provider } from 'react-redux'
 import { applyMiddleware, combineReducers, createStore, Store } from 'redux'
-import combineApiReducers from '../../src/combine.api.reducers'
+import combineApiReducers from '../src/combine.api.reducers'
+import { Provider } from 'react-redux'
 
 const moxios = require('moxios')
 
 const TestApi = buildApiReducer(testApi, 'test')
 
-function TestComponent() {
-  const [login, state] = useApiAction(TestApi, api => api.authentication.login, {})
-
+function TestComponent(props: any) {
+  const [login, state] = props.login()
   return (
     <div>
       <button onClick={() => login('username', 'password')}>Login</button>
@@ -23,7 +22,11 @@ function TestComponent() {
   )
 }
 
-describe('useApiAction', () => {
+const ConnectedTestComponent = connectApi(TestComponent, TestApi, api => ({
+  login: api.authentication.login
+}))
+
+describe('connectApis', () => {
   let store: Store
   beforeEach(() => {
     const combined = combineApiReducers({ TestApi })
@@ -37,7 +40,7 @@ describe('useApiAction', () => {
 
     render(
       <Provider store={store}>
-        <TestComponent />
+        <ConnectedTestComponent />
       </Provider>
     )
 

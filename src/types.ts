@@ -237,3 +237,45 @@ export type UseApiAction<
   A extends ApiCall<Response, Error, Payload>,
   S
 > = [(...args: Parameters<A>) => ApiAction<Payload, Response, Error>, S]
+
+/**
+ * Actions to be mapped to a component's props
+ */
+export type MapActions<A extends ApiDefinition> = (api: ApiEndpointsDefinition<A>) => Record<string, [any, any]>
+
+type ExtractGroup<T> = T extends [infer Group, any] ? Group : never
+
+type ExtractEndpoint<T> = T extends [any, infer Endpoint] ? Endpoint : never
+
+export type ConnectionArgs<T extends ApiDefinition> = {
+  api: ApiDefinitionContext<T>
+  endpoints: MapActions<T>
+}
+
+type ExtractMapActions<T extends ConnectionArgs<A>, A extends ApiDefinition> = T extends { endpoints: infer U }
+  ? U
+  : never
+
+/**
+ * The props generated after connecting a component to an API
+ */
+export type ConnectedApiProps<
+  A extends ApiDefinition,
+  Args extends ConnectionArgs<A> = ConnectionArgs<A>,
+  Actions extends ExtractMapActions<Args, A> = ExtractMapActions<Args, A>,
+  MappedActions extends ReturnType<Actions> = ReturnType<Actions>,
+  K extends keyof MappedActions = keyof MappedActions,
+  Group extends ExtractGroup<MappedActions[K]> = ExtractGroup<MappedActions[K]>,
+  Endpoint extends ExtractEndpoint<MappedActions[K]> = ExtractEndpoint<MappedActions[K]>,
+  Response extends ExtractResponse<A[Group][Endpoint]> = ExtractResponse<A[Group][Endpoint]>,
+  Error extends ExtractError<A[Group][Endpoint]> = ExtractError<A[Group][Endpoint]>,
+  Payload extends ExtractPayload<A[Group][Endpoint]> = ExtractPayload<A[Group][Endpoint]>,
+  TSelected extends WebComponentStateFromEndpoint<A[Group][Endpoint]> = WebComponentStateFromEndpoint<
+    A[Group][Endpoint]
+  >
+> = Record<
+  K,
+  (
+    actionParams: { [n in keyof ApiAction<any, any, any>]?: ApiAction<any, any, any>[n] }
+  ) => UseApiAction<Response, Error, Payload, A[Group][Endpoint], TSelected>
+>
