@@ -6,7 +6,7 @@ import { act, fireEvent, render, screen } from '@testing-library/react'
 import { applyMiddleware, combineReducers, createStore, Store } from 'redux'
 import combineApiReducers from '../src/combine.api.reducers'
 import { Provider } from 'react-redux'
-import { ApiConnectedProps } from '../src/types'
+import { ApiConnectedProps } from '../src'
 
 const moxios = require('moxios')
 
@@ -17,11 +17,12 @@ const connector = connectApi(TestApi, api => ({
 }))
 
 function TestComponent(props: ApiConnectedProps<typeof connector> & { id: string }) {
-  const [login, state] = props.login()
+  const [login, state, clearLogin] = props.login()
   return (
     <div>
       <button onClick={() => login('username', 'password')}>Login</button>
       <button onClick={() => login('username2', 'password2')}>Login2</button>
+      <button onClick={() => clearLogin()}>Clear</button>
       {state.submitted && <span className="token">{state.data.token}</span>}
     </div>
   )
@@ -129,5 +130,20 @@ describe('connectApis', () => {
     })
 
     expect(screen.getByText('token56789')).toBeDefined()
+
+    // clear the previous action
+
+    fireEvent.click(screen.getByText('Clear'))
+
+    expect(
+      store.getState().apis.test.authentication.login.instances['2950ec4c6863236b692aac22e21ff558a31816cb']
+    ).toEqual({
+      errors: null,
+      data: null,
+      failed: false,
+      submitting: false,
+      submitted: false,
+      statusCode: 0
+    })
   })
 })

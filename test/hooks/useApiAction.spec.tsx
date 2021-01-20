@@ -12,12 +12,19 @@ const moxios = require('moxios')
 const TestApi = buildApiReducer(testApi, 'test')
 
 function TestComponent() {
-  const [login, state] = useApiAction(TestApi, api => api.authentication.login, {})
+  const [login, state, clearLogin] = useApiAction(TestApi, api => api.authentication.login, {})
 
   return (
     <div>
       <button onClick={() => login('username', 'password')}>Login</button>
-      <button onClick={() => login('username2', 'password2')}>Login2</button>
+      <button
+        onClick={() => {
+          login('username2', 'password2')
+        }}
+      >
+        Login2
+      </button>
+      <button onClick={() => clearLogin()}>Clear</button>
       {state.submitted && <span className="token">{state.data.token}</span>}
     </div>
   )
@@ -123,5 +130,20 @@ describe('useApiAction', () => {
     })
 
     expect(screen.getByText('token56789')).toBeDefined()
+
+    // clear the previous action
+
+    fireEvent.click(screen.getByText('Clear'))
+
+    expect(
+      store.getState().apis.test.authentication.login.instances['2950ec4c6863236b692aac22e21ff558a31816cb']
+    ).toEqual({
+      errors: null,
+      data: null,
+      failed: false,
+      submitting: false,
+      submitted: false,
+      statusCode: 0
+    })
   })
 })

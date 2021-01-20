@@ -20,7 +20,9 @@ function useApiAction<
   A extends ApiDefinition,
   Group extends keyof A,
   Endpoint extends keyof A[Group],
-  TSelected extends WebComponentStateFromEndpoint<A[Group][Endpoint]> = WebComponentStateFromEndpoint<A[Group][Endpoint]>,
+  TSelected extends WebComponentStateFromEndpoint<A[Group][Endpoint]> = WebComponentStateFromEndpoint<
+    A[Group][Endpoint]
+  >,
   Response extends ExtractResponse<A[Group][Endpoint]> = ExtractResponse<A[Group][Endpoint]>,
   Error extends ExtractError<A[Group][Endpoint]> = ExtractError<A[Group][Endpoint]>,
   Payload extends ExtractPayload<A[Group][Endpoint]> = ExtractPayload<A[Group][Endpoint]>
@@ -42,6 +44,13 @@ function useApiAction<
     dispatch({ type: actionTypes.INITIALIZE(api.types[group][endpoint]), id })
   }, [id])
 
+  const clearState = useCallback(
+    (actionId?: string) => {
+      return dispatch({ id: actionId || id, type: actionTypes.CLEAR(api.types[group][endpoint]) })
+    },
+    [id]
+  )
+
   const actionCreator = useCallback(
     (...args: Payload) => {
       const argsHash = objectHash(args)
@@ -60,7 +69,7 @@ function useApiAction<
     throw new Error('Key "apis" is not defined on the root reducer.')
   })
 
-  return [actionCreator, endpointState || initialState]
+  return [actionCreator, endpointState || initialState, clearState]
 }
 
 export default useApiAction

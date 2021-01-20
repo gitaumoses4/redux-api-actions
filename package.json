@@ -115,7 +115,7 @@
     }
   ],
   "jest": {
-    "testRegex": "(/test/.*\\.spec\\.[tj]s[?x])$",
+    "testRegex": "(/test/.*\\.spec\\.[tj]s[x]?)$",
     "coverageProvider": "v8"
   },
   "sideEffects": false

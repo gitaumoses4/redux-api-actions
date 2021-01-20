@@ -237,7 +237,7 @@ export type UseApiAction<
   Payload extends Array<any>,
   A extends ApiCall<Response, Error, Payload>,
   S
-> = [(...args: Parameters<A>) => ApiAction<Payload, Response, Error>, S]
+> = [(...args: Parameters<A>) => ApiAction<Payload, Response, Error>, S, (id?: string) => Action]
 
 /**
  * Actions to be mapped to a component's props
