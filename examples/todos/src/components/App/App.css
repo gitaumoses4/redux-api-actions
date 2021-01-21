@@ -1,0 +1,22 @@
+.app {
+  max-width: 1200px;
+  margin: auto;
+}
+
+.app .content {
+  display: grid;
+  grid-template-columns: 400px auto;
+  grid-gap: 1em;
+}
+body {
+  background: #eee;
+  font-family: 'Roboto', sans-serif;
+}
+
+.card {
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-shadow: 0 0 4px 1px rgba(0, 0, 0, 0.05);
+  padding: 1em;
+}

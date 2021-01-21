@@ -13,8 +13,8 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useCallback, useEffect, useState } from 'react'
 import objectHash from 'object-hash'
 import actionTypes from '../utils/actionTypes'
-import initialState from '../utils/initialState'
 import { DEFAULT_ACTION_ID } from '../utils/actions'
+import initialState from '../utils/initialState'
 
 function useApiAction<
   A extends ApiDefinition,
@@ -33,6 +33,13 @@ function useApiAction<
 ): UseApiAction<Response, Error, Payload, A[Group][Endpoint], TSelected> {
   const dispatch = useDispatch()
   const [id, setId] = useState(DEFAULT_ACTION_ID)
+  const [endpointState, setEndpointState] = useState(initialState as any)
+  const instances = useSelector((state: any) => {
+    if (state.apis) {
+      return state.apis?.[api.name]?.[group]?.[endpoint]?.instances
+    }
+    throw new Error('Key "apis" is not defined on the root reducer.')
+  })
 
   const [group, endpoint] = getEndpoint(api.endpoints)
   const action = api.actions[group][endpoint]
@@ -41,7 +48,12 @@ function useApiAction<
     /**
      * Initialize the state for this action
      */
-    dispatch({ type: actionTypes.INITIALIZE(api.types[group][endpoint]), id })
+    console.log(instances?.[id])
+    if (!instances?.[id]) {
+      dispatch({ type: actionTypes.INITIALIZE(api.types[group][endpoint]), id })
+    } else {
+      setEndpointState(instances?.[id])
+    }
   }, [id])
 
   const clearState = useCallback(
@@ -62,14 +74,7 @@ function useApiAction<
     [actionParams, action, id]
   )
 
-  const endpointState: TSelected = useSelector((state: any) => {
-    if (state.apis) {
-      return state.apis?.[api.name]?.[group]?.[endpoint]?.instances?.[id]
-    }
-    throw new Error('Key "apis" is not defined on the root reducer.')
-  })
-
-  return [actionCreator, endpointState || initialState, clearState]
+  return [actionCreator, endpointState, clearState]
 }
 
 export default useApiAction

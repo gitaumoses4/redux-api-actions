@@ -116,6 +116,10 @@ describe('connectApis', () => {
       })
     })
 
+    expect(moxios.requests.mostRecent().config.data).toEqual(
+      JSON.stringify({ username: 'username2', password: 'password2' })
+    )
+
     expect(
       store.getState().apis.test.authentication.login.instances['2950ec4c6863236b692aac22e21ff558a31816cb']
     ).toEqual({

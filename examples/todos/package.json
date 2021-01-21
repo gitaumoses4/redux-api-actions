@@ -15,8 +15,9 @@
     "react-redux": "^7.2.2",
     "react-scripts": "4.0.1",
     "redux": "^4.0.5",
+    "redux-devtools": "^3.7.0",
     "typescript": "^4.0.3",
-    "use-api-action": "^1.0.1",
+    "use-api-action": "^1.0.4",
     "web-vitals": "^0.2.4"
   },
   "scripts": {

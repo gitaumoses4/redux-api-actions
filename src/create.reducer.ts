@@ -83,8 +83,6 @@ function createReducer<Payload, Data, Error, State extends WebComponentState<Dat
             }
           }
         : state
-    } else {
-      console.warn('Action (' + JSON.stringify(action) + ') does not have an ID')
     }
     return state
   }

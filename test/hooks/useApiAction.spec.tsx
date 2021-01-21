@@ -25,7 +25,7 @@ function TestComponent() {
         Login2
       </button>
       <button onClick={() => clearLogin()}>Clear</button>
-      {state.submitted && <span className="token">{state.data.token}</span>}
+      {state.data && <span className="token">{state.data.token}</span>}
     </div>
   )
 }

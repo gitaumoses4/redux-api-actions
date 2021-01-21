@@ -1,0 +1,9 @@
+.todo {
+  margin: 1em;
+  display: flex;
+  align-items: center;
+}
+
+.todo input {
+  margin: 0 1em;
+}

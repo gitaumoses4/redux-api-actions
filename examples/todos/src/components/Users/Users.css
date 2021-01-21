@@ -1,0 +1,22 @@
+.users {
+  display: grid;
+  grid-gap: 0.5em;
+}
+
+.user {
+  cursor: pointer;
+}
+
+.user.selected {
+  position: relative;
+}
+
+.user.selected:before {
+  position: absolute;
+  content: '';
+  top: 0;
+  right: 0;
+  height: 100%;
+  background: blue;
+  width: 5px;
+}

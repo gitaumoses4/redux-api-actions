@@ -1,6 +1,6 @@
 {
   "name": "use-api-action",
-  "version": "1.0.2",
+  "version": "1.0.4",
   "description": "REST API services made easy with redux",
   "license": "MIT",
   "homepage": "",
@@ -41,7 +41,8 @@
     "test:cov": "npm test -- --coverage",
     "build": "rollup -c",
     "pretests": "npm run build",
-    "prepublishOnly": "npm run clean && npm run check-types && npm run format:check && npm run lint && npm test",
+    "prepublishOnly": "npm run clean && npm run check-types && npm run format:check && npm run lint && npm test && npm run build",
+    "postpublish": "npm run clean",
     "examples:lint": "eslint --ext js,ts examples",
     "examples:test": "cross-env CI=true babel-node examples/testAll.js"
   },
