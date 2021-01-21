@@ -200,24 +200,26 @@ const [login, loginState] = this.props.login({
   onSuccess: (response, payload) => {},
   onError: (error, payload) => {}
 })
-
 ```
 
 ## Handling Data
+
 ### Clear data before making a new request
-You can clear data before making a new api call. By default, the existing data is kept until the api request is successful. 
+
+You can clear data before making a new api call. By default, the existing data is kept until the api request is successful.
+
 ```typescript jsx
 // hooks
 const [login, loginState] = useApiAction(Api, api => api.authentication.login, {
   clearData: true
 })
 
-
 // class components
 const [login, loginState] = this.props.login({ clearData: true })
 ```
 
 ### Clear errors before making a new request
+
 You can clear the existing errors before making a new api call. By default the existing errors are kept until there are new errors.
 
 ```typescript jsx
@@ -226,9 +228,6 @@ const [login, loginState] = useApiAction(Api, api => api.authentication.login, {
   clearErrors: true
 })
 
-
 // class components
 const [login, loginState] = this.props.login({ clearErrors: true })
 ```
-
-
