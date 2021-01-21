@@ -9,17 +9,14 @@ import pkg from './package.json'
 const extensions = ['.ts']
 const noDeclarationFiles = { compilerOptions: { declaration: false } }
 
-const babelRuntimeVersion = pkg.dependencies['@babel/runtime'].replace(
-  /^[^0-9]*/,
-  ''
-)
+const babelRuntimeVersion = pkg.dependencies['@babel/runtime'].replace(/^[^0-9]*/, '')
 
-const makeExternalPredicate = (externalArr) => {
+const makeExternalPredicate = externalArr => {
   if (externalArr.length === 0) {
     return () => false
   }
   const pattern = new RegExp(`^(${externalArr.join('|')})($|/)`)
-  return (id) => pattern.test(id)
+  return id => pattern.test(id)
 }
 
 export default [
@@ -28,21 +25,22 @@ export default [
     output: { file: 'lib/redux-api-actions.js', format: 'cjs', indent: false },
     external: makeExternalPredicate([
       ...Object.keys(pkg.dependencies || {}),
-      ...Object.keys(pkg.peerDependencies || {}),
+      ...Object.keys(pkg.peerDependencies || {})
     ]),
     plugins: [
       nodeResolve({
-        extensions,
+        extensions
       }),
       typescript({ useTsconfigDeclarationDir: true }),
+      replace({
+        'process.env.NODE_ENV': JSON.stringify('production')
+      }),
       babel({
         extensions,
-        plugins: [
-          ['@babel/plugin-transform-runtime', { version: babelRuntimeVersion }],
-        ],
+        plugins: [['@babel/plugin-transform-runtime', { version: babelRuntimeVersion }]],
         babelHelpers: 'runtime'
-      }),
-    ],
+      })
+    ]
   },
 
   // ES
@@ -51,51 +49,54 @@ export default [
     output: { file: 'es/redux-api-actions.js', format: 'es', indent: false },
     external: makeExternalPredicate([
       ...Object.keys(pkg.dependencies || {}),
-      ...Object.keys(pkg.peerDependencies || {}),
+      ...Object.keys(pkg.peerDependencies || {})
     ]),
     plugins: [
+      replace({
+        'process.env.NODE_ENV': JSON.stringify('production')
+      }),
       nodeResolve({
-        extensions,
+        extensions
       }),
       typescript({ tsconfigOverride: noDeclarationFiles }),
       babel({
         extensions,
-        plugins: [
-          [
-            '@babel/plugin-transform-runtime',
-            { version: babelRuntimeVersion, useESModules: true },
-          ],
-        ],
+        plugins: [['@babel/plugin-transform-runtime', { version: babelRuntimeVersion, useESModules: true }]],
         babelHelpers: 'runtime'
-      }),
-    ],
+      })
+    ]
   },
 
   // ES for Browsers
   {
     input: 'src/index.ts',
     output: { file: 'es/redux-api-actions.mjs', format: 'es', indent: false },
+    external: makeExternalPredicate([
+      ...Object.keys(pkg.dependencies || {}),
+      ...Object.keys(pkg.peerDependencies || {})
+    ]),
     plugins: [
       nodeResolve({
-        extensions,
+        extensions
       }),
       replace({
-        'process.env.NODE_ENV': JSON.stringify('production'),
+        'process.env.NODE_ENV': JSON.stringify('production')
       }),
       typescript({ tsconfigOverride: noDeclarationFiles }),
       babel({
         extensions,
         exclude: 'node_modules/**',
+        babelHelpers: 'inline'
       }),
       terser({
         compress: {
           pure_getters: true,
           unsafe: true,
           unsafe_comps: true,
-          warnings: false,
-        },
-      }),
-    ],
+          warnings: false
+        }
+      })
+    ]
   },
 
   // UMD Development
@@ -104,22 +105,26 @@ export default [
     output: {
       file: 'dist/redux-api-actions.js',
       format: 'umd',
-      name: 'Redux Use API',
-      indent: false,
+      name: 'Redux API actions',
+      indent: false
     },
+    external: makeExternalPredicate([
+      ...Object.keys(pkg.dependencies || {}),
+      ...Object.keys(pkg.peerDependencies || {})
+    ]),
     plugins: [
       nodeResolve({
-        extensions,
+        extensions
+      }),
+      replace({
+        'process.env.NODE_ENV': JSON.stringify('production')
       }),
       typescript({ tsconfigOverride: noDeclarationFiles }),
       babel({
         extensions,
-        exclude: 'node_modules/**',
-      }),
-      replace({
-        'process.env.NODE_ENV': JSON.stringify('development'),
-      }),
-    ],
+        exclude: 'node_modules/**'
+      })
+    ]
   },
 
   // UMD Production
@@ -129,28 +134,32 @@ export default [
       file: 'dist/redux-api-actions.min.js',
       format: 'umd',
       name: 'Redux Use API',
-      indent: false,
+      indent: false
     },
+    external: makeExternalPredicate([
+      ...Object.keys(pkg.dependencies || {}),
+      ...Object.keys(pkg.peerDependencies || {})
+    ]),
     plugins: [
       nodeResolve({
-        extensions,
+        extensions
       }),
       typescript({ tsconfigOverride: noDeclarationFiles }),
       babel({
         extensions,
-        exclude: 'node_modules/**',
+        exclude: 'node_modules/**'
       }),
       replace({
-        'process.env.NODE_ENV': JSON.stringify('production'),
+        'process.env.NODE_ENV': JSON.stringify('production')
       }),
       terser({
         compress: {
           pure_getters: true,
           unsafe: true,
           unsafe_comps: true,
-          warnings: false,
-        },
-      }),
-    ],
-  },
+          warnings: false
+        }
+      })
+    ]
+  }
 ]
