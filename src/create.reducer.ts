@@ -84,9 +84,7 @@ function createReducer<Payload, Data, Error, State extends WebComponentState<Dat
           }
         : state
     } else {
-      if (process.env.NODE_ENV === 'development') {
-        console.error('Action (' + JSON.stringify(action) + ') does not have an ID')
-      }
+      console.error('Action (' + JSON.stringify(action) + ') does not have an ID')
     }
     return state
   }
