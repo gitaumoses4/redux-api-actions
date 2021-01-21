@@ -1,11 +1,11 @@
 {
-  "name": "redux-api-actions",
+  "name": "use-api-action",
   "version": "1.0.0",
   "description": "API services made easy with redux",
   "license": "MIT",
   "homepage": "",
-  "repository": "github:gitaumoses4/redux-api-actions",
-  "bugs": "https://github.com/gitaumoses4/redux-api-actions/issues",
+  "repository": "github:gitaumoses4/use-api-action",
+  "bugs": "https://github.com/gitaumoses4/use-api-action/issues",
   "keywords": [
     "redux",
     "reducer",
@@ -19,9 +19,9 @@
   "authors": [
     "Moses Gitau <gitaumoses4@gmail.com> (https://github.com/gitaumoses4)"
   ],
-  "main": "lib/redux-api-actions.js",
-  "unpkg": "dist/redux-api-actions.js",
-  "module": "es/redux-api-actions.js",
+  "main": "lib/use-api-action.js",
+  "unpkg": "dist/use-api-action.js",
+  "module": "es/use-api-action.js",
   "types": "types/index.d.ts",
   "files": [
     "dist",
@@ -105,7 +105,7 @@
     "typescript": "^3.8.3",
     "typings-tester": "^0.3.2"
   },
-  "npmName": "redux-api-actions",
+  "npmName": "use-api-action",
   "npmFileMap": [
     {
       "basePath": "/dist/",

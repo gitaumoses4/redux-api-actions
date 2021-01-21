@@ -18,13 +18,13 @@ const [login, loginState] = useApiAction(Api, api => api.authentication.login)
 ### NPM
 
 ```bash
-npm install --save redux-api-actions
+npm install --save use-api-action
 ```
 
 ### Yarn
 
 ```bash
-yarn add redux-api-actions
+yarn add use-api-action
 ```
 
 ## Basic Usage Guide
