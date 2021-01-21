@@ -22,7 +22,7 @@ const makeExternalPredicate = externalArr => {
 export default [
   {
     input: 'src/index.ts',
-    output: { file: 'lib/redux-api-actions.js', format: 'cjs', indent: false },
+    output: { file: 'lib/use-api-action.js', format: 'cjs', indent: false },
     external: makeExternalPredicate([
       ...Object.keys(pkg.dependencies || {}),
       ...Object.keys(pkg.peerDependencies || {})
@@ -46,7 +46,7 @@ export default [
   // ES
   {
     input: 'src/index.ts',
-    output: { file: 'es/redux-api-actions.js', format: 'es', indent: false },
+    output: { file: 'es/use-api-action.js', format: 'es', indent: false },
     external: makeExternalPredicate([
       ...Object.keys(pkg.dependencies || {}),
       ...Object.keys(pkg.peerDependencies || {})
@@ -70,7 +70,7 @@ export default [
   // ES for Browsers
   {
     input: 'src/index.ts',
-    output: { file: 'es/redux-api-actions.mjs', format: 'es', indent: false },
+    output: { file: 'es/use-api-action.mjs', format: 'es', indent: false },
     external: makeExternalPredicate([
       ...Object.keys(pkg.dependencies || {}),
       ...Object.keys(pkg.peerDependencies || {})
@@ -103,7 +103,7 @@ export default [
   {
     input: 'src/index.ts',
     output: {
-      file: 'dist/redux-api-actions.js',
+      file: 'dist/use-api-action.js',
       format: 'umd',
       name: 'Redux API actions',
       indent: false
@@ -131,7 +131,7 @@ export default [
   {
     input: 'src/index.ts',
     output: {
-      file: 'dist/redux-api-actions.min.js',
+      file: 'dist/use-api-action.min.js',
       format: 'umd',
       name: 'Redux Use API',
       indent: false
