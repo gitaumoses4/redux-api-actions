@@ -102,8 +102,6 @@ describe('useApiAction', () => {
       statusCode: 200
     })
 
-    expect(screen.getByText(token)).toBeDefined()
-
     fireEvent.click(screen.getByText('Login2'))
 
     await moxios.wait(jest.fn)

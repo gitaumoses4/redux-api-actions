@@ -10,7 +10,7 @@ import {
   WebComponentStateFromEndpoint
 } from '../types'
 import { useDispatch, useSelector } from 'react-redux'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useState } from 'react'
 import objectHash from 'object-hash'
 import actionTypes from '../utils/actionTypes'
 import { DEFAULT_ACTION_ID } from '../utils/actions'
@@ -33,28 +33,9 @@ function useApiAction<
 ): UseApiAction<Response, Error, Payload, A[Group][Endpoint], TSelected> {
   const dispatch = useDispatch()
   const [id, setId] = useState(DEFAULT_ACTION_ID)
-  const [endpointState, setEndpointState] = useState(initialState as any)
-  const instances = useSelector((state: any) => {
-    if (state.apis) {
-      return state.apis?.[api.name]?.[group]?.[endpoint]?.instances
-    }
-    throw new Error('Key "apis" is not defined on the root reducer.')
-  })
 
   const [group, endpoint] = getEndpoint(api.endpoints)
   const action = api.actions[group][endpoint]
-
-  useEffect(() => {
-    /**
-     * Initialize the state for this action
-     */
-    console.log(instances?.[id])
-    if (!instances?.[id]) {
-      dispatch({ type: actionTypes.INITIALIZE(api.types[group][endpoint]), id })
-    } else {
-      setEndpointState(instances?.[id])
-    }
-  }, [id])
 
   const clearState = useCallback(
     (actionId?: string) => {
@@ -73,6 +54,19 @@ function useApiAction<
     },
     [actionParams, action, id]
   )
+
+  const endpointState = useSelector((state: any) => {
+    if (state.apis) {
+      const instanceState = state.apis?.[api.name]?.[group]?.[endpoint]?.instances?.[id]
+      if (instanceState) {
+        return instanceState
+      } else {
+        dispatch({ type: actionTypes.INITIALIZE(api.types[group][endpoint]), id })
+        return initialState
+      }
+    }
+    throw new Error('Key "apis" is not defined on the root reducer.')
+  })
 
   return [actionCreator, endpointState, clearState]
 }
