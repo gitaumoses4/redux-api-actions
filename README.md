@@ -7,6 +7,7 @@
 ![npm](https://img.shields.io/npm/v/use-api-action)
 ![npm type definitions](https://img.shields.io/npm/types/use-api-action)
 
+[![NPM](https://nodei.co/npm/use-api-action.png)](https://nodei.co/npm/use-api-action/) <br />
 Consume APIs with react/redux without the pain of writing actions and reducers as simple as:
 
 ```typescript jsx
