@@ -1,11 +1,11 @@
 {
   "name": "use-api-action",
-  "version": "1.0.5",
+  "version": "1.1.0",
   "description": "REST API services made easy with redux",
   "license": "MIT",
   "homepage": "",
-  "repository": "github:gitaumoses4/use-api-action",
-  "bugs": "https://github.com/gitaumoses4/use-api-action/issues",
+  "repository": "github:gitaumoses4/redux-api-actions",
+  "bugs": "https://github.com/gitaumoses4/redux-api-actions/issues",
   "keywords": [
     "redux",
     "reducer",
