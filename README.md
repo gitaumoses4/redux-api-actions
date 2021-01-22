@@ -1,4 +1,11 @@
 # Redux API Actions
+[![GitHub issues](https://img.shields.io/github/issues/gitaumoses4/redux-api-actions)](https://github.com/gitaumoses4/redux-api-actions/issues)
+[![GitHub stars](https://img.shields.io/github/stars/gitaumoses4/redux-api-actions)](https://github.com/gitaumoses4/redux-api-actions/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/gitaumoses4/redux-api-actions)](https://github.com/gitaumoses4/redux-api-actions/network)
+[![GitHub license](https://img.shields.io/github/license/gitaumoses4/redux-api-actions)](https://github.com/gitaumoses4/redux-api-actions/blob/master/LICENSE.md)
+![npm](https://img.shields.io/npm/dw/use-api-action)
+![npm](https://img.shields.io/npm/v/use-api-action)
+![npm type definitions](https://img.shields.io/npm/types/use-api-action)
 
 Consume APIs with react/redux without the pain of writing actions and reducers as simple as:
 
