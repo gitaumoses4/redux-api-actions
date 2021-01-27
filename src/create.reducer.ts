@@ -23,6 +23,8 @@ function updateInstance<Payload, Data, Error, State extends WebComponentState<Da
       data: action.clearData ? null : state.data,
       submitting: true,
       submitted: false,
+      fetching: true,
+      fetched: false,
       failed: false,
       errors: action.clearErrors ? null : state.errors,
       statusCode: null
@@ -32,6 +34,8 @@ function updateInstance<Payload, Data, Error, State extends WebComponentState<Da
       ...state,
       submitted: true,
       submitting: false,
+      fetching: false,
+      fetched: true,
       data: action.payload,
       errors: action.clearErrors ? null : state.errors,
       failed: false,
@@ -41,6 +45,8 @@ function updateInstance<Payload, Data, Error, State extends WebComponentState<Da
     return {
       ...state,
       submitted: true,
+      fetching: false,
+      fetched: false,
       submitting: false,
       errors: action.payload,
       failed: true,
