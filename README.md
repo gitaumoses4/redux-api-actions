@@ -1,4 +1,5 @@
 # Redux API Actions
+
 [![GitHub issues](https://img.shields.io/github/issues/gitaumoses4/redux-api-actions)](https://github.com/gitaumoses4/redux-api-actions/issues)
 [![GitHub stars](https://img.shields.io/github/stars/gitaumoses4/redux-api-actions)](https://github.com/gitaumoses4/redux-api-actions/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/gitaumoses4/redux-api-actions)](https://github.com/gitaumoses4/redux-api-actions/network)
@@ -169,6 +170,8 @@ const [login, loginState, clearLogin] = props.state.login()
       "failed": false,
       "submitting": false,
       "submitted": false,
+      "fetching": false,
+      "fetched": false,
       "statusCode": 200
     }
     ```
@@ -180,6 +183,8 @@ const [login, loginState, clearLogin] = props.state.login()
     | submitting | Set to true when the data is being fetched                                   |
     | submitted  | Set to true when the data has been fetched whether there was an error or not |
     | statusCode | Updated after every successful / failed request                              |
+    | fetched    | Set to true when the data has been fetched only when there was no error.     |
+    | fetching   | Similar to submitting, to show when data is being fetched.                   |
 3.  The third argument is the `clear` action. It is used to clear the state `(data, errors, statusCode etc.)` and restore it to the initial state.
 
     ```typescript jsx
@@ -239,3 +244,12 @@ const [login, loginState] = useApiAction(Api, api => api.authentication.login, {
 // class components
 const [login, loginState] = this.props.login({ clearErrors: true })
 ```
+
+# License (MIT)
+
+Copyright &copy; Moses Gitau
+All rights reserved.
+
+Find a copy of the License [here](https://github.com/redux-api-actions/blob/master/LICENSE.md)
+
+<a href="https://www.buymeacoffee.com/gitaumoses4" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png" alt="Buy Me A Coffee" style="height: 41px !important;width: 174px !important;box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;-webkit-box-shadow: 0px 3px 2px 0px rgba(190, 190, 190, 0.5) !important;" ></a>

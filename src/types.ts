@@ -14,6 +14,8 @@ export type ArgumentTypes<F extends Function> = F extends (...args: infer A) => 
 export interface WebComponentState<Data, Error> {
   submitting: boolean
   submitted: boolean
+  fetching: boolean
+  fetched: boolean
   data: Data
   errors: Error
   failed: boolean

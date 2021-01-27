@@ -36,6 +36,8 @@ describe('createReducer', () => {
       ...initialState,
       submitting: true,
       submitted: false,
+      fetching: true,
+      fetched: false,
       failed: false,
       statusCode: null,
       errors: null,
@@ -100,6 +102,8 @@ describe('createReducer', () => {
       ...initialState,
       submitting: false,
       submitted: true,
+      fetching: false,
+      fetched: true,
       failed: false,
       statusCode: 201,
       errors: {
@@ -120,6 +124,8 @@ describe('createReducer', () => {
       ...initialState,
       submitting: false,
       submitted: true,
+      fetching: false,
+      fetched: true,
       failed: false,
       statusCode: 201,
       data: { username: 'John Doe' }
@@ -151,6 +157,8 @@ describe('createReducer', () => {
       submitting: false,
       submitted: true,
       failed: true,
+      fetching: false,
+      fetched: false,
       statusCode: 400,
       errors: {
         error: 'This username already exists'
@@ -173,6 +181,8 @@ describe('createReducer', () => {
       submitting: false,
       submitted: true,
       failed: true,
+      fetching: false,
+      fetched: false,
       statusCode: 400,
       errors: {
         error: 'This username already exists'

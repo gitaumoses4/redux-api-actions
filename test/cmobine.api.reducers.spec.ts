@@ -44,6 +44,8 @@ describe('combineApiReducers', () => {
           failed: false,
           submitting: false,
           submitted: false,
+          fetching: false,
+          fetched: false,
           statusCode: 0
         }
       }
@@ -72,6 +74,8 @@ describe('combineApiReducers', () => {
             errors: null,
             failed: false,
             submitting: false,
+            fetched: true,
+            fetching: false,
             submitted: true,
             statusCode: 200
           }

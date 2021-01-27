@@ -64,6 +64,8 @@ describe('useApiAction', () => {
               data: null,
               errors: null,
               failed: false,
+              fetching: false,
+              fetched: false,
               submitting: false,
               submitted: false,
               statusCode: 0
@@ -97,6 +99,8 @@ describe('useApiAction', () => {
       data: { token },
       errors: null,
       failed: false,
+      fetching: false,
+      fetched: true,
       submitting: false,
       submitted: true,
       statusCode: 200
@@ -124,6 +128,8 @@ describe('useApiAction', () => {
       failed: false,
       submitting: false,
       submitted: true,
+      fetching: false,
+      fetched: true,
       statusCode: 200
     })
 
@@ -138,6 +144,8 @@ describe('useApiAction', () => {
     ).toEqual({
       errors: null,
       data: null,
+      fetching: false,
+      fetched: false,
       failed: false,
       submitting: false,
       submitted: false,

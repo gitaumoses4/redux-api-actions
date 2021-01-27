@@ -65,6 +65,8 @@ describe('connectApis', () => {
               errors: null,
               failed: false,
               submitting: false,
+              fetching: false,
+              fetched: false,
               submitted: false,
               statusCode: 0
             }
@@ -97,6 +99,8 @@ describe('connectApis', () => {
       data: { token },
       errors: null,
       failed: false,
+      fetched: true,
+      fetching: false,
       submitting: false,
       submitted: true,
       statusCode: 200
@@ -127,6 +131,8 @@ describe('connectApis', () => {
       data: {
         token: 'token56789'
       },
+      fetching: false,
+      fetched: true,
       failed: false,
       submitting: false,
       submitted: true,
@@ -146,6 +152,8 @@ describe('connectApis', () => {
       data: null,
       failed: false,
       submitting: false,
+      fetching: false,
+      fetched: false,
       submitted: false,
       statusCode: 0
     })
