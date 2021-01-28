@@ -3,15 +3,10 @@ import { AxiosError, AxiosResponse } from 'axios'
 import * as React from 'react'
 
 /**
- * Return the argument types for a function
- */
-export type ArgumentTypes<F extends Function> = F extends (...args: infer A) => any ? A : never
-
-/**
  * A web component state represents the reducer state for each api call.
  *
  */
-export interface WebComponentState<Data, Error> {
+export interface WebComponentState<Data = any, Error = any> {
   submitting: boolean
   submitted: boolean
   fetching: boolean
@@ -28,19 +23,19 @@ export interface WebComponentState<Data, Error> {
  * Since an api may have different request payloads, and responses,
  * we need to keep all these instances in one reducer.
  */
-export interface ReducerState<Data, Error> {
+export interface ReducerState<Data = any, Error = any> {
   instances: Record<string, WebComponentState<Data, Error>>
 }
 
 /**
  * A callback to an action when the api request is completed.
  */
-export type ApiListener<Payload, Response> = (response: Response, request: Payload) => void
+export type ApiListener<Payload = any, Response = any> = (response: Response, request: Payload) => void
 
 /**
  * An action is represented as an object that is passed to the reducer from an api call action.
  */
-export interface ApiAction<Payload, Response, Error> extends Action {
+export interface ApiAction<Payload = any, Response = any, Error = any> extends Action {
   payload?: Payload
   onSuccess?: ApiListener<Payload, Response>
   onError?: ApiListener<Payload, Error>
@@ -54,14 +49,14 @@ export interface ApiAction<Payload, Response, Error> extends Action {
 /**
  * An action creator that returns an ApiAction
  */
-export type ApiActionCreator<Payload extends Array<any>, Response, Error> = (
+export type ApiActionCreator<Payload extends Array<any> = any, Response = any, Error = any> = (
   ...args: Payload
 ) => ApiAction<Payload, Response, Error>
 
 /**
  * A function that represents an API call
  */
-export type ApiCall<Response, Error, Args extends Array<any> = Array<any>> = (
+export type ApiCall<Response = any, Error = any, Args extends Array<any> = Array<any>> = (
   ...args: Args
 ) => Promise<AxiosResponse<Response | Error>>
 
@@ -93,7 +88,7 @@ export type ApiErrorHandler<Error> = (error: AxiosError) => Error
 /**
  * Definition for an API reducer
  */
-export type ApiReducer<Payload, Response, Error, State = ReducerState<Response, Error>> = (
+export type ApiReducer<Payload = any, Response = any, Error = any, State = ReducerState<Response, Error>> = (
   state: State,
   action: ApiAction<Payload, Response, Error>
 ) => State
@@ -102,7 +97,7 @@ export type ApiReducer<Payload, Response, Error, State = ReducerState<Response, 
  * Definition for a redux API action
  * This gives the type of the action and the api call to be made for this type.
  */
-export interface ReduxApiAction<Payload extends Array<any>, Response, Error> {
+export interface ReduxApiAction<Payload extends Array<any> = Array<any>, Response = any, Error = any> {
   action: string
   api: ApiCall<Response, Error, Payload>
 }
@@ -121,7 +116,7 @@ type ExtractReducerState<T> = T extends ReduxApiAction<any, infer Response, infe
 /**
  * Extract the state from a redux api action group
  */
-export type ReduxApiActionGroupState<T extends ReduxApiActionGroup> = {
+export type ReduxApiActionGroupState<T extends ReduxApiActionGroup = any> = {
   [K in keyof T]: ExtractReducerState<T[K]>
 }
 
@@ -136,7 +131,11 @@ export type BuiltReducer<T extends ReduxApiActionGroup> = {
 /**
  * A structure for the definition of a single api endpoint.
  */
-export type ApiEndpoint<Response, Error, Args extends Array<any>> = ApiCall<Response, Error, Args>
+export type ApiEndpoint<Response = any, Error = any, Args extends Array<any> = Array<any>> = ApiCall<
+  Response,
+  Error,
+  Args
+>
 
 /**
  * A structure for the definition of a group of api endpoints.
@@ -234,12 +233,12 @@ export type WebComponentStateFromEndpoint<T> = T extends ApiCall<infer Response,
  * -> The redux state for that api action.
  */
 export type UseApiAction<
-  Response,
-  Error,
-  Payload extends Array<any>,
-  A extends ApiCall<Response, Error, Payload>,
-  S
-> = [(...args: Parameters<A>) => ApiAction<Payload, Response, Error>, S, (id?: string) => Action]
+  Response = any,
+  Error = any,
+  Payload extends Array<any> = Array<any>,
+  A extends ApiCall<Response, Error, Payload> = ApiCall<Response, Error, Payload>,
+  State = any
+> = [(...args: Parameters<A>) => ApiAction<Payload, Response, Error>, State, (id?: string) => Action]
 
 /**
  * Actions to be mapped to a component's props
@@ -254,8 +253,8 @@ type ExtractEndpoint<T> = T extends [any, infer Endpoint] ? Endpoint : never
  * The props generated after connecting a component to an API
  */
 export type CreateApiActions<
-  A extends ApiDefinition,
-  Actions extends MapActions<A>,
+  A extends ApiDefinition = any,
+  Actions extends MapActions<A> = MapActions<any>,
   MappedActions extends ReturnType<Actions> = ReturnType<Actions>,
   K extends keyof MappedActions = keyof MappedActions,
   Group extends ExtractGroup<MappedActions[K]> = ExtractGroup<MappedActions[K]>,
