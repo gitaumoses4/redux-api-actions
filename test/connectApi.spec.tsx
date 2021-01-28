@@ -6,7 +6,7 @@ import { act, fireEvent, render, screen } from '@testing-library/react'
 import { applyMiddleware, combineReducers, createStore, Store } from 'redux'
 import combineApiReducers from '../src/combine.api.reducers'
 import { Provider } from 'react-redux'
-import { ApiConnectedProps } from '../src'
+import { ApiConnectedProps } from '../src/types'
 
 const moxios = require('moxios')
 
