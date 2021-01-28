@@ -1,5 +1,6 @@
 # Redux API Actions
 
+[![Tests](https://github.com/gitaumoses4/redux-api-actions/workflows/Tests/badge.svg)](https://github.com/gitaumoses4/redux-api-actions/actions)
 [![GitHub issues](https://img.shields.io/github/issues/gitaumoses4/redux-api-actions)](https://github.com/gitaumoses4/redux-api-actions/issues)
 [![GitHub stars](https://img.shields.io/github/stars/gitaumoses4/redux-api-actions)](https://github.com/gitaumoses4/redux-api-actions/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/gitaumoses4/redux-api-actions)](https://github.com/gitaumoses4/redux-api-actions/network)
