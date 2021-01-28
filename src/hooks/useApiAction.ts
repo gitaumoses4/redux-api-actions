@@ -10,8 +10,7 @@ import {
   WebComponentStateFromEndpoint
 } from '../types'
 import { useDispatch, useSelector } from 'react-redux'
-import { useCallback, useState } from 'react'
-import objectHash from 'object-hash'
+import { useCallback, useEffect, useState } from 'react'
 import actionTypes from '../utils/actionTypes'
 import { DEFAULT_ACTION_ID } from '../utils/actions'
 import initialState from '../utils/initialState'
@@ -37,6 +36,12 @@ function useApiAction<
   const [group, endpoint] = getEndpoint(api.endpoints)
   const action = api.actions[group][endpoint]
 
+  useEffect(() => {
+    if (actionParams?.id) {
+      setId(actionParams.id)
+    }
+  }, [actionParams])
+
   const clearState = useCallback(
     (actionId?: string) => {
       return dispatch({ id: actionId || id, type: actionTypes.CLEAR(api.types[group][endpoint]) })
@@ -44,13 +49,9 @@ function useApiAction<
     [id]
   )
 
-  const actionCreator = useCallback(
+  const actionCreator: any = useCallback(
     (...args: Payload) => {
-      const argsHash = objectHash(args)
-      if (argsHash != id) {
-        setId(argsHash)
-      }
-      return dispatch({ id: argsHash, ...action(...(args as Array<any>)), ...(actionParams || {}) })
+      return dispatch({ id, ...action(...(args as Array<any>)), ...(actionParams || {}) })
     },
     [actionParams, action, id]
   )

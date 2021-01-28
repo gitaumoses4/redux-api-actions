@@ -6,6 +6,7 @@ import { act, fireEvent, render, screen } from '@testing-library/react'
 import { Provider } from 'react-redux'
 import { applyMiddleware, combineReducers, createStore, Store } from 'redux'
 import combineApiReducers from '../../src/combine.api.reducers'
+import { DEFAULT_ACTION_ID } from '../../src/utils/actions'
 
 const moxios = require('moxios')
 
@@ -13,19 +14,21 @@ const TestApi = buildApiReducer(testApi, 'test')
 
 function TestComponent() {
   const [login, state, clearLogin] = useApiAction(TestApi, api => api.authentication.login, {})
+  const [login2, state2] = useApiAction(TestApi, api => api.authentication.login, { id: 'login2' })
 
   return (
     <div>
       <button onClick={() => login('username', 'password')}>Login</button>
       <button
         onClick={() => {
-          login('username2', 'password2')
+          login2('username2', 'password2')
         }}
       >
         Login2
       </button>
       <button onClick={() => clearLogin()}>Clear</button>
       {state.data && <span className="token">{state.data.token}</span>}
+      {state2.data && <span className="token">{state2.data.token}</span>}
     </div>
   )
 }
@@ -60,7 +63,17 @@ describe('useApiAction', () => {
       authentication: {
         login: {
           instances: {
-            __default__action__id__: {
+            login2: {
+              data: null,
+              errors: null,
+              failed: false,
+              fetching: false,
+              fetched: false,
+              submitting: false,
+              submitted: false,
+              statusCode: 0
+            },
+            [DEFAULT_ACTION_ID]: {
               data: null,
               errors: null,
               failed: false,
@@ -93,9 +106,7 @@ describe('useApiAction', () => {
         response: { token }
       })
     })
-    expect(
-      store.getState().apis.test.authentication.login.instances['78af8dddf912e0741076f2d1fe290d1d190de0d2']
-    ).toEqual({
+    expect(store.getState().apis.test.authentication.login.instances[DEFAULT_ACTION_ID]).toEqual({
       data: { token },
       errors: null,
       failed: false,
@@ -118,9 +129,7 @@ describe('useApiAction', () => {
       })
     })
 
-    expect(
-      store.getState().apis.test.authentication.login.instances['2950ec4c6863236b692aac22e21ff558a31816cb']
-    ).toEqual({
+    expect(store.getState().apis.test.authentication.login.instances['login2']).toEqual({
       errors: null,
       data: {
         token: 'token56789'
@@ -139,9 +148,7 @@ describe('useApiAction', () => {
 
     fireEvent.click(screen.getByText('Clear'))
 
-    expect(
-      store.getState().apis.test.authentication.login.instances['2950ec4c6863236b692aac22e21ff558a31816cb']
-    ).toEqual({
+    expect(store.getState().apis.test.authentication.login.instances[DEFAULT_ACTION_ID]).toEqual({
       errors: null,
       data: null,
       fetching: false,

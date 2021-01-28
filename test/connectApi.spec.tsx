@@ -7,6 +7,7 @@ import { applyMiddleware, combineReducers, createStore, Store } from 'redux'
 import combineApiReducers from '../src/combine.api.reducers'
 import { Provider } from 'react-redux'
 import { ApiConnectedProps } from '../src/types'
+import { DEFAULT_ACTION_ID } from '../src/utils/actions'
 
 const moxios = require('moxios')
 
@@ -18,12 +19,14 @@ const connector = connectApi(TestApi, api => ({
 
 function TestComponent(props: ApiConnectedProps<typeof connector> & { id: string }) {
   const [login, state, clearLogin] = props.login()
+  const [login2, state2] = props.login({ id: 'login2' })
   return (
     <div>
       <button onClick={() => login('username', 'password')}>Login</button>
-      <button onClick={() => login('username2', 'password2')}>Login2</button>
+      <button onClick={() => login2('username2', 'password2')}>Login2</button>
       <button onClick={() => clearLogin()}>Clear</button>
       {state.submitted && <span className="token">{state.data.token}</span>}
+      {state2.submitted && <span className="token">{state2.data.token}</span>}
     </div>
   )
 }
@@ -60,7 +63,17 @@ describe('connectApis', () => {
       authentication: {
         login: {
           instances: {
-            __default__action__id__: {
+            [DEFAULT_ACTION_ID]: {
+              data: null,
+              errors: null,
+              failed: false,
+              submitting: false,
+              fetching: false,
+              fetched: false,
+              submitted: false,
+              statusCode: 0
+            },
+            login2: {
               data: null,
               errors: null,
               failed: false,
@@ -93,9 +106,7 @@ describe('connectApis', () => {
         response: { token }
       })
     })
-    expect(
-      store.getState().apis.test.authentication.login.instances['78af8dddf912e0741076f2d1fe290d1d190de0d2']
-    ).toEqual({
+    expect(store.getState().apis.test.authentication.login.instances[DEFAULT_ACTION_ID]).toEqual({
       data: { token },
       errors: null,
       failed: false,
@@ -124,9 +135,7 @@ describe('connectApis', () => {
       JSON.stringify({ username: 'username2', password: 'password2' })
     )
 
-    expect(
-      store.getState().apis.test.authentication.login.instances['2950ec4c6863236b692aac22e21ff558a31816cb']
-    ).toEqual({
+    expect(store.getState().apis.test.authentication.login.instances['login2']).toEqual({
       errors: null,
       data: {
         token: 'token56789'
@@ -145,9 +154,7 @@ describe('connectApis', () => {
 
     fireEvent.click(screen.getByText('Clear'))
 
-    expect(
-      store.getState().apis.test.authentication.login.instances['2950ec4c6863236b692aac22e21ff558a31816cb']
-    ).toEqual({
+    expect(store.getState().apis.test.authentication.login.instances[DEFAULT_ACTION_ID]).toEqual({
       errors: null,
       data: null,
       failed: false,

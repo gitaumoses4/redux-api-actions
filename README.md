@@ -159,7 +159,7 @@ const [login, loginState, clearLogin] = props.state.login()
       onSuccess: (response, payload) => {}
       onError: (error, payload) => {}
       statusCode: 500
-      id: "" // The id is automatically generated and is used to clear the action state
+      id: "default" // The id can be used to distinguish two separate states to the same API cal 
       clearData: boolean // clear the existing data when the api call made.
       clearErrors: boolean // clear the existing errors when the api call is made.
       errorHandler: (error) => {}
