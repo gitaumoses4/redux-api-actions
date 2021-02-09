@@ -194,6 +194,7 @@ export type ApiDefinitionContext<A extends ApiDefinition> = {
   reducers: ApiReducerDefinition<A>
   actions: ApiActionsDefinition<A>
   types: ApiActionTypesDefinition<A>
+  api: A
   name: string
   endpoints: ApiEndpointsDefinition<A>
 }

@@ -44,6 +44,12 @@ describe('buildApiReducer', () => {
     })
   })
 
+  it('should provide the raw api endpoints', () => {
+    const apiContext = buildApiReducer(testApi, 'Test')
+
+    expect(apiContext.api).toEqual(testApi)
+  })
+
   it('should generate the corresponding reducers', () => {
     const { reducers } = buildApiReducer(testApi, 'Test')
 

@@ -137,6 +137,7 @@ function buildApiReducer<A extends ApiDefinition>(api: A, name: string): ApiDefi
     actions: generateActions(api, name),
     reducers: generateReducers(api, name),
     types: generateActionsTypes(api, name),
+    api: api,
     endpoints: generateEndpoints(api),
     name
   }
