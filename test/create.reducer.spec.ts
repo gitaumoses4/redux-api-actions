@@ -235,4 +235,46 @@ describe('createReducer', () => {
 
     expect(state).toMatchObject(prevState)
   })
+
+  it('should update the state with the set onNewData', () => {
+    const reducer = createReducer(initialState, 'fetchAccounts')
+
+    const id = '123'
+    let state = reducer(undefined, { id, type: 'fetchAccounts' })
+
+    state = reducer(state, {
+      id,
+      type: actions.SUCCESS('fetchAccounts'),
+      payload: [{ username: 'John Doe' }],
+      statusCode: 200
+    })
+
+    state = reducer(state, {
+      id,
+      type: actions.SUCCESS('fetchAccounts'),
+      payload: [{ username: 'Jane Doe' }],
+      statusCode: 200,
+      onNewData: (prevState: any, newState: any) => {
+        if (prevState?.length) {
+          return [...prevState, ...newState]
+        }
+        return newState
+      }
+    })
+
+    expect(state).toEqual({
+      instances: {
+        '123': {
+          data: [{ username: 'John Doe' }, { username: 'Jane Doe' }],
+          errors: null,
+          failed: false,
+          fetched: true,
+          fetching: false,
+          statusCode: 200,
+          submitted: true,
+          submitting: false
+        }
+      }
+    })
+  })
 })
