@@ -162,7 +162,8 @@ const [login, loginState, clearLogin] = props.state.login()
       id: "default" // The id can be used to distinguish two separate states to the same API cal 
       clearData: boolean // clear the existing data when the api call made.
       clearErrors: boolean // clear the existing errors when the api call is made.
-      errorHandler: (error) => {}
+      errorHandler: (error) => {},
+      onNewData?: (prevState, newState) => State
     }
     ```
 2.  The second argument is the `state` of the action. It is defined as follows:
@@ -246,6 +247,23 @@ const [login, loginState] = useApiAction(Api, api => api.authentication.login, {
 
 // class components
 const [login, loginState] = this.props.login({ clearErrors: true })
+```
+
+
+### Modifying the existing data after a new response.
+
+You can modify the existing state after making a new request
+
+```typescript jsx
+// hooks
+
+const [getStudents, studentList] = useApiAction(Api, api => api.students.list, {
+  onNewData: (prevStudents, students) => ([...prevStudents, ...students])
+})
+
+const [getStudents, studentList] = this.props.students({
+  onNewData: (prevStudents, students) => ([...prevStudents, ...students])
+})
 ```
 
 # License (MIT)

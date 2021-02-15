@@ -44,6 +44,7 @@ export interface ApiAction<Payload = any, Response = any, Error = any> extends A
   clearData?: boolean // clear the existing data when the api call made.
   clearErrors?: boolean // clear the existing errors when the api call is made.
   errorHandler?: ApiErrorHandler<Error>
+  onNewData?: (prevState: Response, newState: Payload) => Payload
 }
 
 /**
