@@ -255,10 +255,7 @@ describe('createReducer', () => {
       payload: [{ username: 'Jane Doe' }],
       statusCode: 200,
       onNewData: (prevState: any, newState: any) => {
-        if (prevState?.length) {
-          return [...prevState, ...newState]
-        }
-        return newState
+        return [...prevState, ...newState]
       }
     })
 

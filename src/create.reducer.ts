@@ -36,7 +36,7 @@ function updateInstance<Payload, Data, Error, State extends WebComponentState<Da
       submitting: false,
       fetching: false,
       fetched: true,
-      data: action.onNewData ? action.onNewData(state.data, action.payload!) : action.payload,
+      data: state.data && action.onNewData ? action.onNewData(state.data, action.payload!) : action.payload,
       errors: action.clearErrors ? null : state.errors,
       failed: false,
       statusCode: action.statusCode
