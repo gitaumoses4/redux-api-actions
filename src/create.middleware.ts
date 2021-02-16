@@ -32,7 +32,8 @@ function createMiddleware<Response, Error, Payload extends Array<any>>(
           id,
           type: actions.SUCCESS(actionType),
           payload: data,
-          statusCode: response.status
+          statusCode: response.status,
+          onNewData: action.onNewData
         })
       }
     } catch (error) {
