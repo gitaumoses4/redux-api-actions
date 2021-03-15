@@ -25,22 +25,26 @@ describe('buildApiReducer', () => {
 
     expect(actions.authentication.login('username', 'password')).toEqual({
       type: 'Test_authentication_login',
-      payload: ['username', 'password']
+      payload: ['username', 'password'],
+      clearErrors: true
     })
 
     expect(actions.authentication.register('username', 'password')).toEqual({
       type: 'Test_authentication_register',
-      payload: ['username', 'password']
+      payload: ['username', 'password'],
+      clearErrors: true
     })
 
     expect(actions.products.getProduct('123')).toEqual({
       type: 'Test_products_getProduct',
-      payload: ['123']
+      payload: ['123'],
+      clearErrors: true
     })
 
     expect(actions.users.list()).toEqual({
       type: 'Test_users_list',
-      payload: []
+      payload: [],
+      clearErrors: true
     })
   })
 

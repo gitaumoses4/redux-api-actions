@@ -26,7 +26,8 @@ function generateActions<A extends ApiDefinition>(api: A, name: string): ApiActi
         ...acc,
         [endpointName]: (...args: any) => ({
           type: `${name}_${groupName}_${endpointName}`,
-          payload: args
+          payload: args,
+          clearErrors: true
         })
       }),
       {}
